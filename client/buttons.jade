@@ -1,0 +1,25 @@
+template(name='session_edit_button')
+    if currentUser
+        unless is_editing
+            .edit_this.ui.blue.small.button(title="Edit #{tags}" class=button_classes)
+                i.pencil.icon
+                |Edit
+        else
+            .save_doc.ui.green.button(class=button_classes)
+                i.check.icon
+                |Save
+
+
+template(name='session_edit_icon')
+    if currentUser
+        unless is_editing
+            i.blue.pencil.link.icon.edit_this(title=tags class=button_classes)
+        else
+            .save_doc.ui.basic.button(class=button_classes)
+                i.green.check.icon
+                |Save
+
+template(name='edit_button')
+    a.ui.circular.icon.button(href="/edit/#{_id}")
+        i.pencil.icon
+        

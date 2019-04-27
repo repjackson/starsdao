@@ -1,0 +1,164 @@
+//- template(name='people')
+//-     .ui.padded.stackable.grid.pad-left
+//-         .centered.row
+//-             .six.wide.column.scrolling
+//-                 .ui.basic.segment
+//-                     if selected_tags
+//-                         #clear_tags.ui.red.icon.button
+//-                             i.remove.icon
+//-                     each selected_tags
+//-                         .unselect_tag.ui.red.button
+//-                             b #{this}
+//-                     each global_tags
+//-                         .select_tag.ui.compact.large.button
+//-                             | #{this.name}
+//-                             // small #{this.count}
+//- 
+//-             .ten.wide.column.scrolling
+//-                 each people
+//-                     +user_item
+                        
+                        
+template(name='user_item')                            
+    .ui.stackable.grid.segment
+        a.four.wide.column(href="/user/#{_id}/view") 
+            if image_id
+                img.ui.image(src="{{c.url image_id width=200 height=150 crop='fit'}}")
+            else if profile.image_id
+                img.ui.image(src="{{c.url profile.image_id width=200 height=150 crop='fit'}}")
+        .twelve.wide.column
+            a.ui.header(href="/user/#{username}") 
+                |#{profile.name}
+            a.ui.small.header(href="/user/#{username}") 
+                |#{username}
+            .meta
+                each tags
+                    .ui.basic.label #{this}
+                i.user.shield.icon
+                |Roles 
+                each roles
+                    .ui.basic.label #{this}
+                i.message.icon
+                |Emails
+                if emails
+                    each emails
+                        .ui.basic.label #{address}
+            .ui.hidden.divider
+            // if currentUser
+            //     +toggle_friend
+            //- +user_connect_button        
+            a.ui.circular.button(href="/user/#{username}")
+                |View #{username}
+                i.right.chevron.icon
+            
+            
+            
+template(name='user_Gallery')
+    .ui.center.aligned.white.header 
+        i.gallery.icon
+        |Gallery
+    .add_photo.ui.button
+        i.plus.icon
+        |Photo
+    .ui.padded.stackable.three.column.grid
+        each photos
+            .column
+                img.ui.rounded.image(src="{{c.url image_id width=400 height=400 gravity='face' crop='fill'}}")
+            
+            
+            
+template(name='user_events')
+    .ui.center.aligned.white.header 
+        i.calendar.icon
+        |Events
+    .add_event.ui.button
+        i.plus.icon
+        |Event
+    .ui.padded.stackable.three.column.grid
+        each events
+            .column
+                img.ui.image(src="{{c.url image_id width=400 height=400 gravity='face' crop='fill'}}")
+            
+            
+            
+template(name='user_contact')
+    .ui.center.aligned.white.header 
+        i.contact.icon
+        | Contact
+    .ui.form
+        .field
+            label Message
+            textarea(rows='3')
+    +user_contact_info
+            
+            
+template(name='user_contact_info')
+    .shadowed-box
+        .ui.header
+            i.phone.icon
+            |Contact
+        .ui.icon.circular.button.toggle_edit
+            if is_editing
+                i.green.checkmark.icon
+            else 
+                i.blue.pencil.icon
+        .ui.list
+            if profile.phone
+                .item
+                    a(href="tel:#{profile.phone}") 
+                        i.phone.icon
+                        |#{profile.phone}
+            if profile.website
+                .item 
+                    a(href=profile.website target='_blank') 
+                        |#{profile.website}
+                        i.external.icon
+            .item Created {{ from_now createdAt }}
+        if is_editing
+            +user_field key='street' label='Street'
+            +user_field key='city' label='City'
+            +user_field key='state' label='State'
+            +user_field key='zip' label='Zip'
+        else
+            .ui.list
+                .item #{street}
+                .item #{city}
+                .item #{state}
+                .item #{zip}
+            
+            
+template(name='users') 
+    .ui.padded.grid
+        .row
+            .sixteen.wide.column
+                h1.ui.center.aligned.header 
+                    i.users.icon
+                    |Users
+                .ui.centered.cards
+                    each users
+                        +user
+                
+template(name='user')                
+    .ui.card
+        .image
+            //- a(href="/user/#{username}/")
+            //- img(src="{{c.url image_id height=400 width=400 background='white' crop='pad'}}")
+            img(src="{{c.url image_id height=300 width=300 gravity='face' crop='fill'}}")
+        .content
+            a(href="/user/#{username}/")
+                h2.ui.center.aligned.header #{first_name} #{last_name} 
+                .ui.small.grey.header @#{username}
+            each five_tags
+                .ui.compact.small.circular.button.person_tag(class=tag_class) 
+                    strong #{this}
+            +text_view key='first_name' label='First Name'
+            +text_view key='last_name' label='Last Name'
+            +text_view key='address' label='Address'
+            +number_view key='unit_number' label='Unit #'
+            +number_view key='building_number' label='Building #'
+            +text_view key='email' label='Email'
+            +phone_view key='phone' label='Phone'
+            +date_view key='start_date' label='Start Date'
+            +date_view key='expiration_date' label='Expiration Date'
+
+            

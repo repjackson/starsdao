@@ -1,0 +1,234 @@
+template(name='goldrun')
+    img.ui.fluid.image.checkin_banner(src="{{c.url 'grfront' width=1000 height=500 crop='crop'}}")
+    .ui.padded.grid.checkin_page
+        .sixteen.wide.column
+            //- h1.ui.center.aligned.header 
+            //-     |Gold Run Health Club
+            .ui.left.icon.huge.fluid.input
+                input.username_search(type='text' placeholder='Check in Gold Run resident...')
+                if is_query
+                    i.remove.link.icon.clear_results
+                else 
+                    i.sign.in.green.icon
+            .ui.stackable.padded.grid
+                .row
+                    .sixteen.wide.column
+                        if checkedout_members.length
+                            .ui.cloud.center.aligned.segment
+                                h2.ui.center.aligned.header 
+                                    //- +icolor name='internal' classes='ui inline image'
+                                    |Check In Member
+                                .ui.three.centered.stackable.cards
+                                    each checkedout_members
+                                        .card
+                                            .image
+                                                if image_id
+                                                    img.ui.image(src="{{c.url image_id width=400 height=400 gravity='face' crop='fill'}}")
+                                            .content
+                                                .header #{first_name} #{last_name}
+                                                .meta @#{username}
+                                                if is_dev
+                                                    a.ui.basic.circular.button(href="/user/#{username}/")
+                                                        |View Profile
+                                                        i.chevron.right.icon
+                                                +checkin_button
+                        else
+                            if checking_in
+                                if is_query
+                                    .ui.cloud.center.aligned.segment
+                                        .ui.center.aligned.header No Members Found
+                                        .ui.center.aligned.header 
+                                            |Please drop yellow card and ask staff to add.
+                                    //- +add_resident
+                if is_admin
+                    .row
+                        .sixteen.wide.column
+                            .ui.cloud.segment
+                                h1.ui.center.aligned.header
+                                    //- +icolor name='internal' classes='ui image'
+                                    |#{checkedin_members.count} Checked In Members
+                                .ui.doubling.centered.cards
+                                    each checkedin_members
+                                        +big_user_card username
+                    .three.column.row
+                        .column
+                            .ui.header
+                                //- +icolor name='megaphone' classes='ui inline image'
+                                //- i.rss.icon
+                                |Notices
+                            .content
+                                .ui.small.header FM receiver headsets now available to borrow for tvs
+                                
+                            .ui.accordion
+                                h4.title
+                                    // +icolor name='edit-property' classes='ui inline image'
+                                        // .ui.inline.header 
+                                    i.rss.icon
+                                    | Log
+                                    i.dropdown.icon
+                                .content
+                                    .ui.feed
+                                        each events
+                                            .event
+                                                .label
+                                                    img.ui.image(src="{{c.url object.image_id width=400 height=400 gravity='face' crop='fill'}}")
+                                                .content
+                                                    .summary
+                                                        |#{body}
+                                                        .date
+                                                            |#{when}
+                                                        //- if is_dev
+                                                        //-     +remove_button
+                                
+                        .column
+                                .ui.header
+                                    i.poll.icon
+                                    |Poll
+                                .content
+                        .column
+                            .ui.header
+                                +icolor name='front-desk' classes='ui inline image'
+                                | Staff on Duty
+                            with currentUser.username
+                                +big_user_card
+                    .centered.row
+                        .ui.basic.center.aligned.segment
+                            if is_admin
+                                a.ui.large.circular.basic.button(href='/add_resident')
+                                    i.user.shield.icon
+                                    | Add Resident
+                            a.ui.large.circular.basic.button(href='https://sites.google.com/goldrun.page/home/new-members?authuser=2' target='_window')
+                                |Rules and Regulations
+                            a.ui.large.circular.basic.button(href='https://sites.google.com/goldrun.page/home/guest-waiver?authuser=2' target='_window')
+                                |Guest Waiver
+            +health_club_info
+                
+            //- .ui.check_out.modal
+            //-     .header Checkout #{selected_person.username}?
+            //-     .content
+            //-         .ui.header #{selected_person.first_name} #{selected_person.last_name}
+            //-         .ui.header #{selected_person.username}
+            //-     .actions
+            //-         .ui.large.ok.teal.button
+            //-             |Check Out
+            //-         .ui.large.cancel.basic.button
+            //-             |Cancel
+            //- .ui.check_in.modal
+            //-     .header Check In #{selected_person.username}?
+            //-     .content
+            //-         .ui.header #{selected_person.first_name} #{selected_person.last_name}
+            //-         .ui.header #{selected_person.username}
+            //-     .actions
+            //-         .ui.large.ok.green.button
+            //-             |Check In
+            //-         .ui.large.cancel.basic.button
+            //-             |Cancel
+                        
+                        
+template(name='add_resident')
+    .ui.stackable.padded.grid
+        .centered.row
+            .eight.wide.column
+                h1.ui.center.aligned.header
+                    i.user.plus.icon
+                    | Resident
+                .ui.big.form
+                    .field
+                        //- |First Name
+                        input#first_name(type='text' placeholder='First Name')
+                    .field
+                        //- |Last Name
+                        input#last_name(type='text' placeholder='Last Name')
+                    //- .field
+                    //-     |Username
+                    //-     input#username(type='text')
+                if permission
+                    .ui.fluid.green.button.create_and_checkin
+                        |Create and Check In
+        .row
+        
+        
+template(name='sign_waiver')
+    with receipt_doc
+        .ui.stackable.padded.grid
+            .centered.row
+                .twelve.wide.column.scrolling
+                    .row
+                        h1.ui.center.aligned.header
+                            i.user.plus.icon
+                            |Sign Waiver
+                        with waiver_doc
+                            |!{html}
+                        +signature
+                        .ui.fluid.green.button.sign_waiver
+                            | Sign Waiver
+
+
+
+template(name='checkin_button')
+    unless healthclub_checkedin
+        .ui.large.fluid.circular.basic.button.checkin(title='Check In')
+            i.sign.in.large.icon
+            //- +icolor name='internal' classes='ui image'
+            |Check In
+    if healthclub_checkedin
+        .ui.large.fluid.circular.basic.button.checkout(title='Sign Out')
+            i.sign.out.large.icon
+            //- +icolor name='exit-sign' classes='ui avatar image'
+            |Check Out
+    //- +rules_sign
+    //- +guest_sign
+    //- .ui.accordion
+    //-     .title
+    //-         .ui.inline.small.header
+    //-             |Events
+    //-             i.dropdown.icon
+    //-     .content
+    //-         .ui.feed
+    //-             each log_events
+    //-                 .event
+    //-                     .label
+    //-                         img.ui.image(src="{{c.url object.image_id width=400 height=400 gravity='face' crop='fill'}}")
+    //-                     .content
+    //-                         .summary
+    //-                             |#{body}
+    //-                             .date
+    //-                                 |#{when}
+    //-                             if is_dev
+    //-                                 +remove_button
+
+
+template(name='health_club_info')
+    .ui.stackable.grid
+        .three.column.inverted.row
+            .column
+                .ui.header Wifi
+                | Gold Run Health Club / goldrun1
+                .ui.header Upstairs Code
+                | 4589
+                .ui.header Security
+                | 303.443.3701
+            .column
+                .ui.header Onsite Manager
+                .ui.list
+                    .item Rick Hamp 
+                    .item 303.545.1787
+                    .item goldruncondos@gmail.com
+                .ui.header After Hours Emergency
+                | 303.221.1117
+                .ui.header Boulder Valley Towing
+                | 303.444.4868
+                .ui.header Colorado Security Services
+                | 303.443.3701
+                .ui.header Gavins Plumbing
+                | 303.571.5114
+            .column
+                .ui.header Hours
+                .ui.list
+                    .item Mon 7a-10p
+                    .item Tues 7a-10p
+                    .item Wed 7a-10p
+                    .item Thur 7a-10p
+                    .item Fri 7a-9p
+                    .item Sat 8a-9p
+                    .item Sun 8a-10p

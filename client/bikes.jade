@@ -1,0 +1,104 @@
+template(name='bikes')
+    .ui.container
+        h1.ui.center.aligned.header Impounded Bikes
+            i#add_impounded_bike.green.plus.link.icon 
+        +cloud filter='bike'
+        .ui.centered.cards
+            each bikes
+                +bike
+            
+
+template(name='bike')
+    .ui.card
+        .image
+            .ui.shape
+                .flip_shape.sides
+                    if image_id
+                        a.side.active
+                            .image
+                                img(src="{{c.url image_id width='290' height='310' crop='lpad'}}")
+                    if frame_image_id
+                        a.side
+                            .image
+                                img(src="{{c.url frame_image_id width='290' height='310' crop='lpad'}}")
+                    if seat_image_id
+                        a.side
+                            .image
+                                img(src="{{c.url seat_image_id width='290' height='310' crop='lpad'}}")
+                    if handlebar_image_id
+                        a.side
+                            .image
+                                img(src="{{c.url handlebar_image_id width='290' height='310' crop='lpad'}}")
+        .content
+            .description
+                |#{body}
+            .meta
+                each tags
+                    .ui.basic.label #{this}
+        .content
+            | posted by #{author.username} #{when}
+            if is_author
+                a.ui.icon.blue.button(href="/bikes/edit/#{_id}")
+                    i.pencil.icon
+
+
+
+template(name='edit_bike')
+    with current_doc
+        .ui.text.container.segment
+            .ui.center.aligned.header Edit Impounded Bike 
+            .ui.form
+                if image_id
+                    .field
+                        label Original Image
+                        .ui.large.image
+                            img(src="{{c.url image_id height='400' crop='fit' }}")
+                            a#remove_photo.ui.top.left.attached.link.basic.label Remove
+                            .ui.bottom.right.attached.basic.label Image Id: #{image_id}
+                else
+                    .fields
+                        .field
+                            label Upload Handlebar Image
+                            input#upload_handlebar_image(type='file' name='upload_picture' accept='image/*')
+                if handlebar_image_id
+                    .field
+                        label Handlebar Image
+                        .ui.large.image
+                            img(src="{{c.url handlebar_image_id height='400' crop='fit' }}")
+                            a#remove_photo.ui.top.left.attached.link.basic.label Remove
+                            .ui.bottom.right.attached.basic.label Image Id: #{handlebar_image_id}
+                else
+                    .fields
+                        .field
+                            label Upload Handlebar Image
+                            input#upload_handlebar_image(type='file' name='upload_picture' accept='image/*')
+                if frame_image_id
+                    .field
+                        label Frame Image
+                        .ui.large.image
+                            img(src="{{c.url frame_image_id height='400' crop='fit' }}")
+                            a#remove_photo.ui.top.left.attached.link.basic.label Remove
+                            .ui.bottom.right.attached.basic.label Image Id: #{frame_image_id}
+                else
+                    .fields
+                        .field
+                            label Upload Frame Image
+                            input#upload_frame_image(type='file' name='upload_picture' accept='image/*')
+                if seat_image_id
+                    .field
+                        label Seat Image
+                        .ui.large.image
+                            img(src="{{c.url seat_image_id height='400' crop='fit' }}")
+                            a#remove_photo.ui.top.left.attached.link.basic.label Remove Seat Image
+                            .ui.bottom.right.attached.basic.label Image Id: #{seat_image_id}
+                else
+                    .fields
+                        .field
+                            label Upload Seat Image
+                            input#upload_seat_image(type='file' name='upload_picture' accept='image/*')
+                +edit_tags
+                +edit_body
+                a.ui.green.large.button(href='/bikes') Save Impounded Bike
+                #delete_bike.ui.red.icon.button
+                    i.trash.icon
+            

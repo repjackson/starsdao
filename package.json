@@ -1,0 +1,12 @@
+{
+	"dependencies": {
+		"@babel/runtime": "^7.1.2",
+		"bcrypt": "^2.0.0",
+		"jquery": "^3.3.1",
+		"watson-developer-cloud": "^3.3.0"
+	},
+	"scripts": {
+		"start": "MAIL_URL='smtp://sethmintom@gmail.com:repj1984!@@smtp.gmail.com:587/' MONGO_URL=mongodb://goldrunadmin:turnfearagainstthose@aws-us-east-1-portal.21.dblayer.com:10444/goldrundb?ssl=true meteor --settings settings.json",
+		"local": "MAIL_URL='smtp://sethmintom@gmail.com:repj1984!@@smtp.gmail.com:587/' meteor --settings settings.json"
+	}
+}

@@ -1,0 +1,89 @@
+
+template(name='task_edit')
+    with current_doc
+        .ui.stackable.padded.grid
+            .four.wide.column
+                h1.ui.center.aligned.header Edit Task
+                a.ui.green.big.fluid.button(href='/tasks') Save
+                #delete_task.ui.red.icon.button
+                    i.trash.icon
+            .twelve.wide.column
+                .ui.form
+                    +text_edit key='title' label='Title'
+                    
+                    +image_edit key='before_image_id'
+                    +text_edit key='location' label='Location'
+                    //- +single_user_ref key='user'
+                    +date_edit key='due_date' label='Due Date'
+                    .ui.secondary.segment
+                        +boolean_edit key='complete' label='Complete'
+                        if complete
+                            +date_edit key='complete_date' label='Complete Date'
+                            +image_edit key='after_image' label='After Image'
+                            +textarea_edit key='notes' label='Notes'
+                    +textarea_edit key='description' label='Description'
+                    +array_edit key='tags' label='Tags'
+            
+            
+template(name='tasks') 
+    .ui.padded.stackable.grid
+        .four.wide.column
+            h1.ui.center.aligned.header 
+                i.tasks.icon
+                |Tasks
+            #add_task.ui.fluid.icon.button
+                i.plus.large.icon
+            +cloud filter='task'
+        .twelve.wide.column
+            .ui.centered.cards
+                each tasks
+                    +task
+                    
+                
+template(name='task')
+    .ui.fluid.card
+        if before_image_id
+            .image
+                .ui.shape
+                    .flip_shape.sides
+                        if before_image_id
+                            a.side.active
+                                .content
+                                    .ui.center.aligned.header Before
+                                .image
+                                    img.ui.image(src="{{c.url before_image_id width='400' height='400' crop='lpad' }}")
+                        if after_image_id
+                            a.side
+                                .content
+                                    .ui.center.aligned.header After
+                                .image
+                                    img.ui.image(src="{{c.url after_image_id width='400' height='400' crop='lpad' }}")
+        .content
+            if complete
+                span.right.floated
+                    i.green.large.check.icon
+            else
+                i.right.floated.remove.large.icon
+            .header #{description}
+            .meta
+                i.location.arrow.icon
+                |#{location}
+            if due_date
+                span
+                    i.calendar.icon
+                    |#{due_date}
+            i.tags.icon
+            each tags
+                .ui.basic.label #{this}
+            if complete
+                |Completed by #{staff}
+                if complete_date
+                    |on #{complete_date}
+                if notes
+                    div
+                        i.edit.icon
+                        |#{notes}
+            a.ui.icon.button(href="/task/#{_id}/edit") 
+                i.pencil.icon
+            //- a.ui.button(href="/task/#{_id}/view") 
+            //-     |View

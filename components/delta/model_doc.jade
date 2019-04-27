@@ -1,0 +1,73 @@
+template(name='model_doc_edit')
+    with current_doc
+        .ui.stackable.padded.grid
+            .centered.row
+                .four.wide.column
+                    .ui.header(title="model: #{model}")
+                        |Edit #{model}
+                    +creation_info
+                    a.ui.green.big.circular.icon.button(href="/m/#{current_model.slug}/#{_id}/view")
+                        i.big.checkmark.icon
+                    #delete_doc.ui.red.icon.circular.button
+                        i.trash.icon
+                            
+                .twelve.wide.column.scrolling
+                    //- |#{model}
+                    each fields
+                        +Template.dynamic template=edit_template 
+                        // .ui.header #{key} [#{field}] #{label}
+
+
+template(name='model_doc_view')
+    with current_doc
+        .ui.stackable.padded.grid
+            .row
+                .four.wide.column
+                    .ui.cloud.segment
+                        a.ui.circular.large.black.button(href="/m/#{current_model.slug}" title=current_model.plural)
+                            i.left.chevron.icon
+                            i.icon(class=current_model.icon)
+                            |#{current_model.title}
+                            //- .divider
+                            //-     i.chevron.right.icon
+                            //- .active.section
+                            //-     if icon
+                            //-         i.icon(class=icon)
+                            //-     if title
+                            //-         |#{title}
+                            //-     else
+                            //-         | View #{model}
+
+                        // .ui.header
+                        //     a.ui.icon.button(href="/m/#{model}" title=plural)
+                        //         i.chevron.left.icon
+                        //     |View #{model}
+                        if is_admin
+                            a.ui.big.circular.icon.button(href="/m/#{model}/#{_id}/edit" title='Edit')
+                                i.blue.pencil.icon
+                            .ui.small.header Timestamp Tags
+                            each _timestamp_tags
+                                .ui.circular.label #{this}
+                        //- each model.actions
+                        //-     +Template.dynamic template=this data=current_doc
+                        div
+                        +user_list_toggle key='bookmark_ids' icon='bookmark' label='Bookmark' color='red'
+                        div
+                        +creation_info
+                .twelve.wide.column.scrolling
+                    .ui.cloud.segment
+                        .ui.header
+                            each fields
+                                if header
+                                    +Template.dynamic template=view_template 
+                            // if icon
+                            //     i.icon(class=icon)
+                            // |#{title}
+                        each fields
+                            unless header
+                                .item
+                                    +Template.dynamic template=view_template 
+                        div
+                        +comments
+                        if watson
+                            +watson_view

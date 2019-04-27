@@ -1,0 +1,8 @@
+{
+  "short_name": "dao",
+  "name": "dao",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait"
+  "background_color": "black"
+}

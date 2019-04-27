@@ -1,0 +1,139 @@
+template(name='model_edit')
+    with current_doc
+        .ui.stackable.padded.grid
+            .centered.row
+                .six.wide.column
+                    .ui.header(title="model: #{model}")
+                        |#{title}
+                    +creation_info
+                    h1.ui.header Edit Model
+                    .ui.form
+                        +text_edit key='title' label='Title' direct=true
+                        +text_edit key='slug' label='Slug' direct=true
+                        +icon_edit key='icon' label='Icon' direct=true
+                        +textarea_edit key='description' label='Description' direct=true
+                        +array_edit key='tags' label='Tags' direct=true
+                        +text_edit key='collection' label='Collection' direct=true
+                        +multi_doc_edit key='view_roles' label='View Roles' ref_model='role' direct=true
+                    a.ui.green.big.circular.icon.button(href="/m/#{slug}")
+                        i.big.checkmark.icon
+                    #delete_model.ui.red.icon.circular.button
+                        i.trash.icon
+                .ten.wide.column
+                    //- |#{type}
+                    //- each fields
+                    //-     +Template.dynamic template=edit_template 
+                    //-     // .ui.header #{key} [#{field}] #{label}
+                    .ui.inline.header Fields
+                    .ui.icon.circular.button.add_field
+                        i.plus.green.icon
+                    each fields
+                        .ui.smoothed.segment
+                            +field_edit
+
+
+template(name='model_view')
+    with current_doc
+        .ui.stackable.padded.grid
+            .row
+                .sixteen.wide.column
+                    .ui.breadcrumb
+                        a.section(href="/m/#{current_model.slug}" title=current_model.plural)
+                            .ui.compact.circular.button
+                                |#{current_model.title}
+                        .divider
+                            i.chevron.right.icon
+                        .active.section
+                            if icon
+                                i.icon(class=icon)
+                            if title
+                                |#{title}
+                            else
+                                | View #{type}
+            .row
+                .four.wide.column
+                    // .ui.header
+                    //     a.ui.icon.button(href="/m/#{model}" title=plural)
+                    //         i.chevron.left.icon
+                    //     |View #{model}
+                    if can_edit
+                        a.ui.fluid.button(href="/m/#{model}/#{_id}/edit")
+                            i.pencil.icon
+                            |Edit
+                    each model.actions
+                        +Template.dynamic template=this data=current_doc
+                    +user_list_toggle key='bookmark_ids' icon='bookmark' label='Bookmark' color='red'
+                    +creation_info
+                .twelve.wide.column
+                    .ui.header
+                        each fields
+                            if header
+                                +Template.dynamic template=view_template 
+                        // if icon
+                        //     i.icon(class=icon)
+                        // |#{title}
+                    each fields
+                        unless header
+                            .item
+                                +Template.dynamic template=view_template 
+                    div
+                    +comments
+                    if watson
+                        +watson_view
+        .ui.stackable.padded.grid
+            .four.wide.column
+                h1.ui.header #{title}
+                .ui.circular.icon.big.green.button.add_child(title="Add #{slug}")
+                    i.plus.icon
+                a.ui.icon.circular.blue.big.button(href="/model/edit/#{_id}")
+                    i.pencil.icon
+                .ui.form
+                    +text_view key='title'
+                    +text_view key='slug'
+                    +text_view key='icon'
+                    +textarea_view key='description'
+                    +array_view key='tags'
+                //- +cloud filter=slug
+
+            .twelve.wide.column
+                //- .ui.header Fields
+                //- each fields
+                //-     .ui.divider
+                //-     +field_view
+                each model_docs
+                    .ui.fluid.card
+                        .content
+                            +Template.dynamic template=model_doc
+                            +array_view key='tags'
+                            +edit_button
+
+                    
+
+
+
+template(name='field_edit')
+    +text_edit key='title' direct=true label='Title'        
+    +text_edit key='key'  direct=true label='Key'           
+    //- +text_edit key='field_type' direct=true label='Field Type'              
+    +icon_edit key='icon' direct=true label='Icon'              
+    +single_doc_edit key='field_type' ref_model='field_type' label='Field Type' direct=true                 
+    +multi_doc_edit key='view_roles' ref_model='role' label='View Roles' direct=true icon='eye'          
+    +multi_doc_edit key='edit_roles' ref_model='role' label='Edit Roles' direct=true icon='pencil'        
+    +number_edit key='rank' label='Rank' direct=true                 
+    //- +text_edit key='ref_model' label='Reference Model' direct=true
+    +boolean_edit key='faceted' label='Faceted' direct=true
+
+    if is_ref  
+        +single_doc_edit key='ref_model' ref_model='model' label='Reference Model' direct=true
+    else if is_user_ref  
+        +single_doc_edit key='role_filter' ref_model='role' label='Role Filter' direct=true
+    div             
+    +remove_button
+            
+//- template(name='view_model')
+        
+template(name='field_view')
+    +text_view key='title'                    
+    +text_view key='key'                    
+    +text_view key='field_type'                    
+    +number_view key='rank' label='rank'                  

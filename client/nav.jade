@@ -1,0 +1,131 @@
+template(name='nav')
+    //- .ui.inverted.borderless.attached.large.menu.topnav
+        //- a.toggle_sidebar.icon.item.sidebar_on
+        //-     i.large.sidebar.icon
+        
+    if is_loading
+        i.huge.grey.loading.yin.yang.icon
+    else
+        a.ui.basic.white.inverted.icon.circular.big.button.set_model(href='/m/model' class="{{isActivePath '/m/model'}}")
+            i.large.home.icon
+        each bookmarked_models
+            a.ui.basic.white.inverted.icon.circular.big.button.set_bookmarked_model(href="/m/#{slug}" class="{{isActivePath '/m/#{slug}'}}" title=title)
+                i.large.icon(class=icon)
+                //- |#{title}
+        a.ui.basic.white.inverted.icon.circular.big.button(href='/users' class="{{isActivePath '/users'}}" title='Users')
+            i.large.users.icon
+        //- a.ui.basic.white.inverted.icon.circular.big.button(href='/frontdesk' class="{{isActivePath '/frontdesk'}}" title='Staff')
+        //-     i.large.briefcase.icon
+        a.ui.basic.white.inverted.icon.circular.big.button(href='/checkin' class="{{isActivePath '/checkin'}}" title='Health Club')
+            i.large.clinic.medical.icon
+        if currentUser
+            unless logging_out
+                //- .ui.simple.dropdown.ui.basic.white.inverted.icon.circular.big.button(href="/user/#{currentUser.username}/notifications" class="{{isActivePath '/messages'}}")
+                //-     i.alarm.icon
+                //-     .menu
+                //-         each notifications
+                //-             .ui.circular.button #{text}
+                a.ui.basic.white.inverted.icon.circular.big.button(href="/user/#{currentUser.username}" class="{{isActiveRoute regex='profile'}}")
+                    i.large.mail.icon(class=mail_icon_class title="#{unread_count} Unread")
+                a.ui.basic.white.inverted.icon.circular.big.button(href="/chat" class="{{isActivePath '/chat'}}")
+                    i.large.chat.icon
+                if is_admin
+                    a.ui.basic.white.inverted.icon.circular.big.button(href='/admin' class="{{isActivePath '/admin'}}")
+                        i.large.shield.icon
+                //- if is_dev
+                //-     a.ui.basic.white.inverted.icon.circular.big.button(href='/m/model' class="{{isActivePath '/m/model'}}")
+                //-         i.large.yin.yang.icon
+                a.ui.basic.white.inverted.icon.circular.big.button(href="/user/#{currentUser.username}" class="{{isActiveRoute regex='user_chat'}}")
+                    if currentUser.image_id
+                        img.ui.avatar.image(src="{{c.url currentUser.image_id width=100 height=100 gravity='face' crop='fill'}}")
+                    else
+                        i.user.large.icon
+                    //- | #{currentUser.username}
+            if logging_out
+                .ui.basic.white.inverted.icon.circular.big.button
+                    i.large.loading.refresh.icon
+            else
+                a#logout.ui.mobile.hidden.ui.basic.white.inverted.icon.circular.big.button(href='#' title='Log Out')
+                    i.sign.out.large.icon
+        else
+            a.ui.ui.basic.white.inverted.icon.circular.big.button(href='/login' title='Login') 
+                i.sign.in.large.icon
+
+
+template(name='sidebar')
+    .ui.left.inline.vertical.sidebar.inverted.grblue.fixed.menu
+        a.header.toggle_sidebar.item(href='/' class="{{isActivePath '/'}}") 
+            i.home.icon
+            | Gold Run
+        a.toggle_sidebar.item(href='/readings' class="{{isActivePath '/readings'}}")
+            i.theme.icon
+            | Readings
+        a.toggle_sidebar.item(href='/lostfound' class="{{isActivePath '/lostfound'}}")
+            i.random.icon
+            | Lost and Found
+        a.toggle_sidebar.item(href='/bikes' class="{{isActivePath '/bikes'}}")
+            i.bicycle.icon
+            | Bikes
+        a.toggle_sidebar.item(href='/frontdesk' class="{{isActivePath '/frontdesk'}}")
+            i.circle.info.icon
+            | Desk Staff
+        a.toggle_sidebar.item(href='/buildings' class="{{isActivePath '/buildings'}}")
+            i.building.icon
+            | Buildings
+        a.toggle_sidebar.item(href='/tasks' class="{{isActivePath '/tasks'}}")
+            i.edit.icon
+            | Tasks
+        a.toggle_sidebar.item(href='/keys' class="{{isActivePath '/keys'}}")
+            i.key.icon
+            | Keys
+        a.toggle_sidebar.item(href='/users' class="{{isActivePath '/users'}}")
+            i.users.icon
+            | People
+        if currentUser
+            unless logging_out
+                a.item(href='/dashboard' class="{{isActivePath '/dashboard'}}")
+                    i.dashboard.icon
+                    | Dashboard
+                .ui.simple.dropdown.icon.item
+                    i.alarm.icon
+                    | Alerts
+                a.item(href='/messages' class="{{isActivePath '/messages'}}")
+                    i.mail.icon
+                    | Mail
+                if is_admin
+                    a.icon.toggle_sidebar.item(href='/admin/members' class="{{isActivePath '/admin/members'}}")
+                        i.configure.icon
+                        | Admin
+                a.item(href="/user/#{currentUser.username}/edit" class="{{isActiveRoute regex='user_edit'}}")
+                    if currentUser.image_id
+                        img.ui.avatar.image(src="{{c.url currentUser.image_id width=50 height=50 gravity='face' crop='fill'}}")
+                    else
+                        i.user.icon
+                    | #{currentUser.username}
+            if logging_out
+                .item
+                    i.loading.refresh.icon
+                    |Logging Out...
+            else
+                a#logout.ui.mobile.hidden.icon.item(href='#' title='Log Out')
+                    i.sign.out.icon
+                    |Log Out
+        else
+            a.ui.item(href='/login') 
+                i.sign.in.icon
+                | Log In
+
+
+
+
+template(name='footer')
+    .ui.fluid.inverted.grblue.attached.segment.footer
+        .ui.container.grid
+            .twelve.wide.inverted.column
+                +health_club_info    
+            .four.wide.column
+                +role_switcher
+        .row
+            .ui.center.aligned.header
+                i.creative.commons.icon
+                |Gold Run

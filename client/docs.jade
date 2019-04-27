@@ -1,0 +1,107 @@
+// template(name='cloud')
+//     #cloud.ui.basic.center.aligned.fluid.segment
+//         if currentUser
+//             .ui.icon.input
+//                 i.plus.icon
+//                 input#quick_add(type='text')
+//             // #add.ui.button
+//             //     i.plus.icon
+//             //     | Full Add
+//         .ui.label
+//             +loginButtons
+//         .ui.hidden.divider
+//         .ui.left.icon.input
+//             i.search.icon
+//             +inputAutocomplete settings=settings id="search" class="" autofocus='' autocomplete="off" placeholder=''
+//         if selected_tags
+//             #clear_tags.ui.primary.icon.compact.button
+//                 i.remove.icon
+//             each selected_tags
+//                 .unselect_tag.ui.primary.compact.button
+//                     strong #{this}
+//         each all_tags
+//             .ui.compact.button.select_tag(class=cloud_tag_class) #{this.name}
+//                 small #{this.count}
+
+
+template(name='cloud')
+    #cloud
+        //- .ui.left.icon.input
+        //-     i.search.icon
+        //-     +inputAutocomplete settings=settings id="search" class="" autocomplete="off" 
+        // .ui.hidden.fitted.divider
+        if selected_tags
+            #clear_tags.ui.grey.icon.big.circular.button
+                i.remove.icon
+            each selected_tags
+                .unselect_tag.ui.grey.big.circular.button
+                    strong #{this}
+        each all_tags
+            .ui.circular.large.button.select_tag(class=cloud_tag_class) 
+                strong #{this.name}
+
+
+
+template(name='doc_cloud')
+    #cloud.ui.basic.segment.container
+        .ui.left.icon.input
+            i.search.icon
+            +inputAutocomplete settings=settings id="search" class="" autocomplete="off" 
+        if selected_tags
+            #clear_tags.ui.primary.icon.circular.large.button
+                i.remove.icon
+            each selected_tags
+                .unselect_tag.ui.primary.circular.large.button
+                    strong #{this}
+        each all_tags
+            .ui.circular.basic.button.select_tag(class=cloud_tag_class) 
+                strong #{this.name}
+
+
+template(name='docs')
+    .ui.container
+        div
+            #add.ui.green.basic.button
+                i.plus.icon
+                | Full Add
+            .ui.icon.input
+                i.lightning.icon
+                input#quick_add(type='text' placeholder='Quick Add')
+        +doc_cloud
+        each docs
+            +view
+
+        
+
+
+template(name='view')
+    .ui.segment.container
+        .content
+            a(href="/view/#{_id}")
+                .image
+                    img.ui.large.centered.image(src="{{c.url image_id }}")
+                h1.ui.header #{title}
+            .meta
+                each tags
+                    .ui.button.tag(class=tag_class) #{this}
+            .description
+                |!{description}
+            if can_edit
+                .edit.ui.icon.circular.basic.button
+                    i.pencil.icon.icon
+            else
+                | by #{author.username} #{when}
+                
+                
+template(name='edit')
+    with current_doc
+        .ui.stackable.padded.grid
+            .four.wide.column
+                h1.ui.header Edit #{type}
+                a.ui.green.big.circular.icon.button(href="/m/#{type}") 
+                    i.large.checkmark.icon
+                #delete_model.ui.red.icon.circular.button
+                    i.remove.icon
+            .twelve.wide.column
+                //- each fields
+                +Template.dynamic template=edit_template

@@ -1,0 +1,311 @@
+template(name='profile')
+    with user_from_username_param  
+        //- img.ui.fluid.image.banner_image(src="{{c.url banner_image_id width=1000 height=500 crop='crop'}}")
+        .ui.padded.stackable.grid.profile_grid
+            .row
+                .four.wide.column.scrolling
+                    if image_id
+                        img.ui.circular.centered.shadowed.image(src="{{c.url image_id height=300 gravity='face' crop='fill'}}")
+                        //- a.item(href="/user/#{user_from_username_param.username}/")
+                    .ui.large.center.aligned.inverted.header
+                        | #{user.first_name}
+                        | #{user.last_name}
+                        if current_user
+                            a(href="/user/#{user_from_username_param.username}/edit")
+                                i.cog.link.icon
+                    .ui.center.aligned.header
+                        | @#{user.username}        
+                    +gr_status                
+                    .ui.smoothed.segment
+                        //- +text_view key='first_name' label='First Name' direct=true
+                        //- +text_view key='last_name' label='Last Name' direct=true
+                        +text_view key='address' label='Address' direct=true
+                        +number_view key='unit_number' label='Unit #' direct=true
+                        +number_view key='building_number' label='Building #' direct=true
+                        //- +text_view key='email' label='Email' direct=true
+                        +phone_view key='phone' label='Phone' direct=true
+                        +date_view key='start_date' label='Start Date' direct=true
+                        +date_view key='expiration_date' label='Expiration Date' direct=true
+                        +textarea_view key='bio' label='Bio' collection='users' icon='align-left'
+                        each emails
+                            .ui.circular.basic.label #{address}
+                    if is_admin
+                        a.ui.circular.fluid.large.inverted.button(href="/user/#{user_from_username_param.username}/edit")
+                            i.settings.icon
+                            | settings
+                    else if current_user
+                        a.ui.circular.fluid.large.inverted.button(href="/user/#{user_from_username_param.username}/edit")
+                            i.settings.icon
+                            | settings
+                    if current_user
+                        .ui.circular.fluid.large.inverted.button.logout
+                            i.sign.out.icon
+                            |log out
+                    .ui.smoothed.segment
+                        .ui.header
+                            i.heartbeat.icon
+                            |#{user.points} Karma
+                        .ui.header 
+                            i.user.shield.icon
+                            |roles
+                        each roles
+                            .ui.circular.basic.label #{this}
+            
+                .six.wide.column
+                    //- +violations
+                    +user_bookmarks    
+                    //- +user_feed
+                    +user_tasks
+                    +user_notifications
+                    +user_karma
+                .six.wide.column
+                    +user_messages
+                    +user_connections
+                    //- +user_rules_widget
+                    //- .ui.cloud.segment
+                    //-     .ui.grey.header
+                    //-         i.user.icon
+                    //-         | Guests
+                    //- if is_admin
+                    +role_switcher
+                    //- if current_user
+                    +user_tags
+                    //- +user_checkins
+                    //- +user_chat
+            
+            
+            
+template(name='gr_status')   
+    with user_from_username_param         
+        //- .ui.small.header
+        //-     i.clock.icon
+        //-     | Status
+        if current_user
+            +array_edit key='gr_status' label='status' direct=true icon='clock'
+        else
+            each gr_status
+                .ui.circular.basic.label #{this}
+            
+        //- .ui.small.header
+        //-     i.marker.icon
+        //-     | Location 
+        if current_user
+            +array_edit key='gr_location' label='location' direct=true icon='marker'
+        else 
+            each gr_location
+                .ui.circular.basic.label #{this}
+            
+template(name='user_checkins')
+    .ui.fluid.styled.accordion.profile_block
+        .active.title
+            .ui.grey.inline.center.aligned.header 
+                i.tasks.icon
+                |Check In's
+        .active.content
+            .ui.fluid.input
+            
+            
+            
+template(name='user_section')
+    +user_delta
+    // +Template.dynamic template=user_section_template
+
+template(name='user_about')
+    
+template(name='violations')
+    .ui.fluid.styled.accordion.profile_block
+        .active.title
+            .ui.grey.inline.center.aligned.header 
+                i.exclamation.triangle.icon
+                |violations
+        .active.content
+            .ui.list
+                each violations
+                    .item
+                        .header #{title} #{violation_date} #{violation_time}
+
+
+template(name='user_rules_widget')
+    .ui.cloud.segment
+        .ui.grey.header
+            i.edit.icon
+            | User Rules Signature
+    
+
+template(name='user_people')
+    +user_following
+    +follow_user
+
+template(name='user_feed')
+    .ui.cloud.segment
+        .ui.header 
+            i.rss.icon
+            |feed
+        //- if current_user
+        //-     .ui.fluid.input
+        //-         input(type='text' placeholder='Share something...')
+    +user_wall
+                
+                
+template(name='user_bookmarks')
+    .ui.fluid.styled.accordion.profile_block
+        .active.title
+            .ui.grey.inline.center.aligned.header 
+                i.bookmark.icon
+                |bookmarks
+        .active.content
+            
+            
+template(name='user_karma')
+    .ui.fluid.styled.accordion.profile_block
+        .active.title
+            .ui.grey.inline.center.aligned.header 
+                i.heartbeat.icon
+                | karma
+        .active.content
+            .ui.button buy karma
+            with user_from_username_param
+                |karma #{karma}
+                
+            
+                
+template(name='user_unread')
+    .ui.cloud.segment
+        .ui.header 
+            i.new.icon
+            |unread messages
+                
+                
+
+template(name='user_tasks')
+    .ui.fluid.styled.accordion.profile_block
+        .active.title
+            .ui.grey.inline.center.aligned.header 
+                i.tasks.icon
+                |tasks
+        .active.content
+            .ui.fluid.input
+                input.assign_task(type='text' placeholder='Assign task')
+            //- .ui.button.view_complete(class=view_complete_class)
+            //-     |View Completed
+            // .ui.button.view_incomplete(class=view_complete_class)
+            //     |View Incomplete
+            each assigned_tasks
+                .ui.smoothed.segment
+                    .ui.header #{body}
+                    +boolean_edit key='complete' label='Complete' direct=true true_icon='checkmark' false_icon='remove'
+                    +voting
+                    +author_info
+                    +creation_info
+                    if is_author
+                        +remove_button
+                        
+            
+            
+template(name='user_array_list')
+    .ui.list
+        each users
+            .item
+                +user_info
+            
+            
+            
+template(name='role_switcher')
+    .ui.fluid.styled.accordion.profile_block
+        .active.title
+            .ui.grey.inline.center.aligned.header 
+                i.user.shield.icon(title='Role Switcher')
+                |roles
+        .active.content
+            if is_eric
+                +user_array_element_toggle key='roles' value='dev' user=currentUser
+            with currentUser
+                +multi_doc_edit key='roles' label='Roles' ref_model='role' direct=true
+            //- +user_array_element_toggle key='roles' value='admin' user=currentUser
+            //- +user_array_element_toggle key='roles' value='user' user=currentUser
+            //- +user_array_element_toggle key='roles' value='staff' user=currentUser
+            //- +user_array_element_toggle key='roles' value='resident' user=currentUser
+            //- +user_array_element_toggle key='roles' value='owner' user=currentUser
+
+
+            
+template(name='user_array_element_toggle')
+    .ui.circular.button.toggle_element(class=user_array_element_toggle_class)
+        |#{value}
+
+template(name='user_string_toggle')
+    .ui.button.toggle_element(class=user_string_element_toggle_class)
+        |#{value}
+        
+template(name='user_tags')
+    .ui.fluid.styled.accordion.profile_block
+        .active.title
+            .ui.grey.inline.center.aligned.header 
+                i.tags.icon
+                |tags
+        .active.content
+            each tags
+                .ui.basic.label 
+                    if is_user
+                        i.remove.link.icon.remove_tag
+                    |#{this}
+            // .ui.fluid.input
+            //     input.tag_user(type='text' placeholder='Tag yourself...')
+            // .ui.fluid.input
+            //     input(type='text' placeholder="Tag #{user_from_username_param.name}")
+            
+            
+template(name='user_notifications')
+    .ui.fluid.styled.accordion.profile_block
+        .active.title
+            .ui.grey.inline.center.aligned.header 
+                i.bullhorn.icon
+                |notifications
+        .active.content
+            +user_following
+            +follow_user
+    
+template(name='user_following')    
+    .ui.cloud.segment
+        .ui.header 
+            i.human.icon
+            |following
+        +user_array_list user=user_from_username_param array='following_ids'
+          
+
+template(name='follow_user')    
+    .ui.cloud.segment
+        unless current_user
+            a.toggle_follow_user(href='#' title='Follow User')
+                i.renew.icon
+        else
+            i.renew.icon
+        |followed by
+        +user_array_list user=user_from_username_param array='followed_by_ids'
+                
+
+template(name='user_wall')
+    .ui.fluid.styled.accordion.profile_block
+        .active.title
+            .ui.grey.inline.center.aligned.header 
+                i.edit.icon
+                |wall
+        .active.content
+            if currentUser
+                .ui.fluid.icon.input
+                    i.plus.icon
+                    input.new_post(type='text' placeholder='Add post...')
+            .ui.comments
+                each wall_posts
+                    .comment
+                        //- .avatar
+                        .active.content
+                            a.author(href='#') #{author.first_name} #{author.last_name}
+                            .metadata
+                                span.date #{when}
+                            .text.large120 #{body}
+                            .actions
+                                i.remove.link.icon.remove_comment(title='Vote Down')
+                                i.thumbs.up.link.icon.vote_up_comment(title='Vote Up')
+                                |#{points}
+                                i.message.link.icon.mark_comment_read(title='Mark Read')        

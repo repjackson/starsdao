@@ -1,0 +1,38 @@
+template(name='login')
+    .ui.padded.stackable.grid
+        .centered.row
+            .ten.wide.column
+                .ui.center.aligned.basic.segment
+                    i.massive.icons
+                        i.yin.yang.grey.icon(class="{{#if is_logging_in}} loading {{/if}}")
+                        i.corner.right.chevron.icon
+                if message
+                    h4.ui.center.aligned.header #{message}
+                .ui.fluid.input(class=login_class)
+                    .ui.inline.grey.small.header 
+                        i.user.grey.icon
+                        |username
+                    input.username(type='text')
+                .ui.fluid.input(class=login_class)
+                    .ui.inline.grey.small.header 
+                        i.lock.grey.icon
+                        | password
+                    input.password(type='password')
+                //- if username
+                if logging_in
+                    .ui.fluid.large.black.circular.button.enter(title="Login #{username}" class=enter_class)
+                        |login #{username}
+                        i.right.chevron.icon
+                else
+                    .ui.center.aligned.basic.segment
+                        .ui.small.grey.header no '#{username}' user
+                        a.ui.circular.black.button(href='/register')
+                            i.user.plus.icon
+                            |register
+                .ui.center.aligned.basic.segment    
+                    a.ui.circular.large.grey.button(href='/forgot_password')
+                        i.refresh.icon
+                        |forgot password
+                    a.ui.circular.large.grey.button(href='/register') 
+                        i.user.plus.icon
+                        |register
